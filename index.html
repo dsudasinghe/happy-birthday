@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Happy Birthday Suduu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg1: #fff4f6;
+        --bg2: #ffe0e8;
+        --ink: #6b2c43;
+        --accent: #e84a6f;
+        --paper: #fffaf3;
+        color-scheme: light;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        font-family: "Quicksand", system-ui, sans-serif;
+        color: var(--ink);
+        background: radial-gradient(
+          ellipse at top,
+          var(--bg1),
+          var(--bg2) 70%,
+          #ffd0dc
+        );
+        min-height: 100dvh;
+        overflow-x: hidden;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* ---------- falling petals ---------- */
+      #sky {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: 0;
+      }
+      .fall {
+        position: absolute;
+        top: -30px;
+        width: 14px;
+        height: 14px;
+        border-radius: 150% 0 150% 0;
+        opacity: 0.8;
+        animation: fall linear forwards;
+      }
+      @keyframes fall {
+        0% {
+          transform: translate(0, 0) rotate(0deg);
+        }
+        50% {
+          transform: translate(var(--drift), 55vh) rotate(220deg);
+        }
+        100% {
+          transform: translate(calc(var(--drift) * -0.5), 110vh) rotate(420deg);
+          opacity: 0;
+        }
+      }
+
+      /* ---------- intro ---------- */
+      #intro {
+        position: fixed;
+        inset: 0;
+        z-index: 10;
+        display: grid;
+        place-items: center;
+        text-align: center;
+        padding: 24px 16px;
+        background: radial-gradient(ellipse at center, #fff7f9, #ffd9e3);
+        transition:
+          opacity 0.9s ease,
+          visibility 0.9s;
+      }
+      #intro.gone {
+        opacity: 0;
+        visibility: hidden;
+      }
+      #intro h2 {
+        font-family: "Dancing Script", cursive;
+        font-size: clamp(2rem, 7vw, 3rem);
+        margin-bottom: 0.4em;
+      }
+      #intro p {
+        opacity: 0.8;
+        margin-bottom: 2rem;
+      }
+      .envelope {
+        font-size: 4.5rem;
+        display: inline-block;
+        animation: bob 2.4s ease-in-out infinite;
+      }
+      @keyframes bob {
+        50% {
+          transform: translateY(-10px) rotate(-4deg);
+        }
+      }
+
+      .btn {
+        font:
+          600 1.05rem "Quicksand",
+          sans-serif;
+        color: #fff;
+        background: linear-gradient(135deg, #ff7aa0, var(--accent));
+        border: 0;
+        border-radius: 999px;
+        padding: 0.9em 1.8em;
+        cursor: pointer;
+        box-shadow: 0 8px 22px -8px rgba(232, 74, 111, 0.7);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 26px -8px rgba(232, 74, 111, 0.8);
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+
+      /* ---------- main stage ---------- */
+      main {
+        position: relative;
+        z-index: 1;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 16px 32px;
+        gap: 8px;
+      }
+      h1 {
+        font-family: "Dancing Script", cursive;
+        font-size: clamp(2.4rem, 9vw, 4.6rem);
+        line-height: 1.1;
+        text-align: center;
+        color: var(--accent);
+        text-shadow:
+          0 2px 0 #fff,
+          0 6px 20px rgba(232, 74, 111, 0.25);
+        min-height: 1.2em;
+      }
+      h1 .word {
+        font-weight: inherit;
+        white-space: nowrap;
+      }
+      h1 span {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(18px) scale(0.6);
+      }
+      h1.show span {
+        animation: letter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      }
+      @keyframes letter {
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .sub {
+        font-weight: 500;
+        opacity: 0;
+        transition: opacity 1s ease;
+        text-align: center;
+      }
+      .sub.show {
+        opacity: 0.75;
+      }
+
+      #bouquet {
+        width: min(92vw, 440px);
+        height: auto;
+        max-height: 62dvh;
+        overflow: visible;
+      }
+
+      #noteBtn {
+        opacity: 0;
+        transform: translateY(12px);
+        pointer-events: none;
+        transition:
+          opacity 0.8s ease,
+          transform 0.8s ease;
+        margin-top: 6px;
+      }
+      #noteBtn.show {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+      }
+
+      /* ---------- SVG animation ---------- */
+      .stem {
+        fill: none;
+        stroke: #4f8a4b;
+        stroke-width: 4;
+        stroke-linecap: round;
+      }
+      .petal,
+      .leaf,
+      .pop,
+      .wrap,
+      .bow {
+        transform-box: fill-box;
+      }
+      .petal {
+        transform-origin: 50% 100%;
+        transform: scale(0);
+      }
+      .leaf {
+        transform-origin: 0% 50%;
+        transform: scale(0);
+      }
+      .pop {
+        transform-origin: 50% 50%;
+        transform: scale(0);
+      }
+      .wrap {
+        transform-origin: 50% 100%;
+        opacity: 0;
+      }
+      .bow {
+        transform-origin: 50% 50%;
+        transform: scale(0);
+      }
+
+      .started .stem {
+        animation: grow 1.5s ease-out both;
+      }
+      .started .petal {
+        animation: bloom 1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      .started .leaf {
+        animation: bloom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      .started .pop {
+        animation: bloom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      .started .wrap {
+        animation: wrapIn 0.9s ease-out both;
+      }
+      .started .bow {
+        animation: bloom 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 1s both;
+      }
+
+      @keyframes grow {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes bloom {
+        from {
+          transform: scale(0) rotate(-25deg);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      @keyframes wrapIn {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      #sway {
+        transform-box: view-box;
+        transform-origin: 200px 470px;
+      }
+      .swaying #sway {
+        animation: sway 6s ease-in-out infinite;
+      }
+      @keyframes sway {
+        0%,
+        100% {
+          transform: rotate(-1.2deg);
+        }
+        50% {
+          transform: rotate(1.2deg);
+        }
+      }
+
+      /* ---------- note card ---------- */
+      #overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        display: grid;
+        place-items: center;
+        padding: 16px;
+        background: rgba(107, 44, 67, 0.28);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.4s ease,
+          visibility 0.4s;
+      }
+      #overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+      .card {
+        position: relative;
+        width: min(100%, 440px);
+        max-height: 86dvh;
+        overflow-y: auto;
+        background: var(--paper);
+        background-image: repeating-linear-gradient(
+          transparent 0 31px,
+          rgba(232, 74, 111, 0.12) 31px 32px
+        );
+        border-radius: 18px;
+        padding: 36px 28px 28px;
+        box-shadow: 0 30px 60px -20px rgba(107, 44, 67, 0.5);
+        transform: translateY(40px) rotate(-2deg) scale(0.92);
+        transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      #overlay.open .card {
+        transform: rotate(-1deg);
+      }
+      .card::before {
+        content: "🌸";
+        position: absolute;
+        top: -18px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 2rem;
+      }
+      .card h3 {
+        font-family: "Dancing Script", cursive;
+        font-size: 2.2rem;
+        color: var(--accent);
+        margin-bottom: 8px;
+      }
+      #msg {
+        font-size: 1.05rem;
+        line-height: 32px;
+        white-space: pre-line;
+        min-height: 8em;
+      }
+      #msg::after {
+        content: "|";
+        animation: blink 1s steps(1) infinite;
+        color: var(--accent);
+      }
+      #msg.done::after {
+        content: "";
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0;
+        }
+      }
+      .sign {
+        font-family: "Dancing Script", cursive;
+        font-size: 1.6rem;
+        text-align: right;
+        margin-top: 10px;
+        opacity: 0;
+        transition: opacity 1s;
+      }
+      .sign.show {
+        opacity: 1;
+      }
+      .close {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 0;
+        background: transparent;
+        color: var(--ink);
+        font-size: 1.4rem;
+        cursor: pointer;
+      }
+      .close:hover {
+        background: rgba(232, 74, 111, 0.1);
+      }
+
+      /* ---------- heart burst ---------- */
+      .heart {
+        position: fixed;
+        z-index: 30;
+        pointer-events: none;
+        font-size: var(--s);
+        animation: burst 1.4s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+      }
+      @keyframes burst {
+        0% {
+          transform: translate(-50%, -50%) scale(0.3);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy)))
+            scale(1) rotate(var(--r));
+          opacity: 0;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .swaying #sway,
+        .envelope {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="sky"></div>
+
+    <section id="intro">
+      <div>
+        <div class="envelope">💌</div>
+        <h2>Hii Suduu…</h2>
+        <p>I made a little something for you</p>
+        <button class="btn" id="openBtn">Tap to open 🌷</button>
+      </div>
+    </section>
+
+    <main id="stage">
+      <h1 id="title" aria-label="Happy Birthday Suduu!"></h1>
+      <p class="sub" id="sub">a bouquet that never wilts, just for you</p>
+      <svg
+        id="bouquet"
+        viewBox="0 0 400 500"
+        role="img"
+        aria-label="A blooming bouquet of flowers"
+      ></svg>
+      <button class="btn" id="noteBtn">Read your note 💌</button>
+    </main>
+
+    <div
+      id="overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="noteTitle"
+    >
+      <div class="card">
+        <button class="close" id="closeBtn" aria-label="Close note">×</button>
+        <h3 id="noteTitle">Dear Dhananja,</h3>
+        <p id="msg"></p>
+        <p class="sign" id="sign"></p>
+      </div>
+    </div>
+
+    <script>
+      /* ======== ✏️ EDIT YOUR NOTE HERE ======== */
+      const MESSAGE = `Happy Birthday! 🎂
+
+I wanted to give you flowers that never wilt, so here's a bouquet that blooms every time you open this page.
+
+I hope this year brings you as much happiness as your smile brings to everyone around you (yes, me included 🙈).
+
+Have the most beautiful day. You deserve every bit of it ✨`;
+      const SIGNATURE = "— from lahiru 🌸";
+      /* ======================================== */
+
+      const NS = "http://www.w3.org/2000/svg";
+      const svg = document.getElementById("bouquet");
+
+      function el(tag, attrs = {}, parent) {
+        const n = document.createElementNS(NS, tag);
+        for (const k in attrs) n.setAttribute(k, attrs[k]);
+        if (parent) parent.appendChild(n);
+        return n;
+      }
+      function shade(hex, amt) {
+        const n = parseInt(hex.slice(1), 16);
+        const f = (c) =>
+          Math.max(
+            0,
+            Math.min(255, Math.round(c + (amt < 0 ? c : 255 - c) * amt)),
+          );
+        const r = f(n >> 16),
+          g = f((n >> 8) & 255),
+          b = f(n & 255);
+        return (
+          "#" + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)
+        );
+      }
+      const delay = (node, s) =>
+        (node.style.animationDelay = s.toFixed(2) + "s");
+
+      /* ---- layout ---- */
+      const BASE = { x: 200, y: 430 };
+      const FLOWERS = [
+        { x: 150, y: 112, type: "blossom", r: 20, c: "#ffb3c6" },
+        { x: 252, y: 118, type: "blossom", r: 20, c: "#ffb3c6" },
+        { x: 200, y: 150, type: "rose", r: 40, c: "#e84a6f" },
+        { x: 128, y: 190, type: "rose", r: 33, c: "#f78fa7" },
+        { x: 274, y: 192, type: "rose", r: 33, c: "#f78fa7" },
+        { x: 200, y: 232, type: "rose", r: 31, c: "#ff6f91" },
+        { x: 156, y: 258, type: "daisy", r: 30, c: "#ffffff" },
+        { x: 246, y: 262, type: "daisy", r: 28, c: "#ffe3ea" },
+        { x: 92, y: 262, type: "blossom", r: 26, c: "#c9a7ff" },
+        { x: 308, y: 264, type: "blossom", r: 26, c: "#c9a7ff" },
+        { x: 200, y: 300, type: "daisy", r: 24, c: "#ffffff" },
+      ];
+
+      const sway = el("g", { id: "sway" }, svg);
+
+      /* back wrapping paper */
+      const back = el(
+        "path",
+        {
+          class: "wrap",
+          d: "M70 285 L330 285 L218 482 L182 482 Z",
+          fill: "#fde2e6",
+          stroke: "#f5c2cd",
+          "stroke-width": 2,
+        },
+        sway,
+      );
+      const stems = el("g", {}, sway);
+      const front = el("g", { class: "wrap" }, sway);
+      el(
+        "path",
+        { d: "M108 322 Q200 352 292 322 L214 486 L186 486 Z", fill: "#f9c3cf" },
+        front,
+      );
+      el(
+        "path",
+        {
+          d: "M150 336 L196 484 M250 336 L204 484 M200 344 L200 484",
+          stroke: "#f2a9b9",
+          "stroke-width": 2,
+          fill: "none",
+        },
+        front,
+      );
+      el(
+        "path",
+        {
+          d: "M108 322 Q200 352 292 322",
+          stroke: "#ffffff",
+          "stroke-width": 3,
+          fill: "none",
+          opacity: 0.7,
+        },
+        front,
+      );
+      back.style.animationDelay = front.style.animationDelay = "0s";
+
+      /* ribbon bow */
+      const bow = el("g", { class: "bow" }, sway);
+      el(
+        "path",
+        {
+          d: "M200 418 C170 395 150 412 160 428 C168 440 190 428 200 418 Z",
+          fill: "#e84a6f",
+        },
+        bow,
+      );
+      el(
+        "path",
+        {
+          d: "M200 418 C230 395 250 412 240 428 C232 440 210 428 200 418 Z",
+          fill: "#e84a6f",
+        },
+        bow,
+      );
+      el(
+        "path",
+        {
+          d: "M196 422 L182 462 L192 456 L198 466 Z M204 422 L218 462 L208 456 L202 466 Z",
+          fill: "#d63b60",
+        },
+        bow,
+      );
+      el("circle", { cx: 200, cy: 419, r: 7, fill: "#c22f53" }, bow);
+
+      const heads = el("g", {}, sway);
+
+      /* ---- build flowers ---- */
+      FLOWERS.forEach((f, i) => {
+        const t0 = 0.5 + i * 0.16; // when the stem starts growing
+        const bloomAt = t0 + 1.25; // when petals start opening
+
+        // stem
+        const cx = BASE.x + (f.x - BASE.x) * 0.35,
+          cy = (f.y + BASE.y) / 2 + 20;
+        const stem = el(
+          "path",
+          {
+            class: "stem",
+            d: `M${BASE.x} ${BASE.y} Q${cx} ${cy} ${f.x} ${f.y}`,
+          },
+          stems,
+        );
+        const L = stem.getTotalLength();
+        stem.style.strokeDasharray = L;
+        stem.style.strokeDashoffset = L;
+        delay(stem, t0);
+
+        // a leaf on most stems
+        if (i % 3 !== 1) {
+          const p = stem.getPointAtLength(L * 0.42);
+          const side = f.x < BASE.x ? -1 : 1;
+          const ang = side < 0 ? 200 + ((i * 7) % 20) : -20 - ((i * 7) % 20);
+          const g = el(
+            "g",
+            { transform: `translate(${p.x} ${p.y}) rotate(${ang})` },
+            stems,
+          );
+          const leaf = el(
+            "path",
+            {
+              class: "leaf",
+              d: "M0 0 Q14 -11 32 0 Q14 11 0 0 Z",
+              fill: "#6aa865",
+              stroke: "#4f8a4b",
+              "stroke-width": 1,
+            },
+            g,
+          );
+          delay(leaf, t0 + 0.8);
+        }
+
+        const head = el(
+          "g",
+          { transform: `translate(${f.x} ${f.y}) rotate(${(i * 37) % 360})` },
+          heads,
+        );
+        ({ rose, daisy, blossom })[f.type](head, f, bloomAt);
+      });
+
+      function petal(parent, angle, attrs, t) {
+        const g = el("g", { transform: `rotate(${angle})` }, parent);
+        const p = el("ellipse", attrs, g);
+        p.setAttribute("class", "petal");
+        delay(p, t);
+        return p;
+      }
+
+      function rose(g, f, t) {
+        const layers = 3;
+        for (let k = 0; k < layers; k++) {
+          const n = 5,
+            s = 1 - k * 0.24;
+          const fill = shade(f.c, -0.12 * k);
+          for (let j = 0; j < n; j++) {
+            const ry = f.r * 0.55 * s,
+              rx = f.r * 0.42 * s;
+            petal(
+              g,
+              j * 72 + k * 36,
+              {
+                cx: 0,
+                cy: -ry * 0.8,
+                rx,
+                ry,
+                fill,
+                stroke: shade(f.c, -0.25),
+                "stroke-width": 0.8,
+              },
+              t + k * 0.25 + j * 0.05,
+            );
+          }
+        }
+        const c = el(
+          "circle",
+          { class: "pop", cx: 0, cy: 0, r: f.r * 0.2, fill: shade(f.c, -0.35) },
+          g,
+        );
+        delay(c, t + 0.9);
+        const sp = el(
+          "path",
+          {
+            class: "pop",
+            fill: "none",
+            stroke: shade(f.c, -0.5),
+            "stroke-width": 1.2,
+            "stroke-linecap": "round",
+            d: `M0 0 a${f.r * 0.06} ${f.r * 0.06} 0 1 1 ${f.r * 0.1} 0 a${f.r * 0.12} ${f.r * 0.12} 0 1 1 ${-f.r * 0.2} 0`,
+          },
+          g,
+        );
+        delay(sp, t + 1);
+      }
+
+      function daisy(g, f, t) {
+        for (let j = 0; j < 12; j++) {
+          petal(
+            g,
+            j * 30,
+            {
+              cx: 0,
+              cy: -f.r * 0.5,
+              rx: f.r * 0.16,
+              ry: f.r * 0.5,
+              fill: f.c,
+              stroke: "#f2c4cf",
+              "stroke-width": 0.8,
+            },
+            t + j * 0.04,
+          );
+        }
+        const c = el(
+          "circle",
+          {
+            class: "pop",
+            cx: 0,
+            cy: 0,
+            r: f.r * 0.27,
+            fill: "#ffc94d",
+            stroke: "#f0a92e",
+            "stroke-width": 1.5,
+          },
+          g,
+        );
+        delay(c, t + 0.5);
+      }
+
+      function blossom(g, f, t) {
+        for (let j = 0; j < 5; j++) {
+          petal(
+            g,
+            j * 72,
+            {
+              cx: 0,
+              cy: -f.r * 0.45,
+              rx: f.r * 0.38,
+              ry: f.r * 0.48,
+              fill: f.c,
+              stroke: shade(f.c, -0.2),
+              "stroke-width": 0.8,
+            },
+            t + j * 0.06,
+          );
+        }
+        const c = el(
+          "circle",
+          {
+            class: "pop",
+            cx: 0,
+            cy: 0,
+            r: f.r * 0.18,
+            fill: "#fff3b0",
+            stroke: "#f5c84c",
+            "stroke-width": 1,
+          },
+          g,
+        );
+        delay(c, t + 0.4);
+      }
+
+      /* baby's breath sprinkled around */
+      const DOTS = [
+        [110, 150],
+        [290, 150],
+        [175, 190],
+        [230, 195],
+        [120, 232],
+        [282, 232],
+        [70, 225],
+        [332, 228],
+        [175, 300],
+        [228, 300],
+        [200, 100],
+        [100, 300],
+        [300, 300],
+        [160, 165],
+        [240, 160],
+      ];
+      DOTS.forEach(([x, y], i) => {
+        const d = el(
+          "circle",
+          {
+            class: "pop",
+            cx: x,
+            cy: y,
+            r: 3 + (i % 3),
+            fill: "#ffffff",
+            stroke: "#f3d3dc",
+            "stroke-width": 0.8,
+          },
+          heads,
+        );
+        delay(d, 3.2 + i * 0.08);
+      });
+
+      /* ---- title ---- */
+      const titleEl = document.getElementById("title");
+      let li = 0;
+      "Happy Birthday Suduu!".split(" ").forEach((word, w) => {
+        if (w) titleEl.appendChild(document.createTextNode(" "));
+        const wrap = document.createElement("b");
+        wrap.className = "word";
+        wrap.setAttribute("aria-hidden", "true");
+        for (const ch of word) {
+          const s = document.createElement("span");
+          s.textContent = ch;
+          s.style.animationDelay = li++ * 0.06 + "s";
+          wrap.appendChild(s);
+        }
+        titleEl.appendChild(wrap);
+      });
+
+      /* ---- falling petals ---- */
+      const sky = document.getElementById("sky");
+      const PETAL_COLORS = [
+        "#ffb3c6",
+        "#ff8fab",
+        "#ffc8dd",
+        "#e7c6ff",
+        "#ffffff",
+      ];
+      function dropPetal() {
+        if (sky.childElementCount > 28) return;
+        const p = document.createElement("div");
+        p.className = "fall";
+        const size = 8 + Math.random() * 10;
+        p.style.width = p.style.height = size + "px";
+        p.style.left = Math.random() * 100 + "vw";
+        p.style.background =
+          PETAL_COLORS[(Math.random() * PETAL_COLORS.length) | 0];
+        p.style.setProperty("--drift", Math.random() * 120 - 60 + "px");
+        p.style.animationDuration = 7 + Math.random() * 6 + "s";
+        p.addEventListener("animationend", () => p.remove());
+        sky.appendChild(p);
+      }
+
+      /* ---- heart burst ---- */
+      function burst(x, y, n = 24) {
+        const icons = ["❤️", "💖", "💕", "🌸", "✨"];
+        for (let i = 0; i < n; i++) {
+          const h = document.createElement("span");
+          h.className = "heart";
+          h.textContent = icons[i % icons.length];
+          const a = Math.random() * Math.PI * 2,
+            d = 80 + Math.random() * 160;
+          h.style.left = x + "px";
+          h.style.top = y + "px";
+          h.style.setProperty("--dx", Math.cos(a) * d + "px");
+          h.style.setProperty("--dy", Math.sin(a) * d - 40 + "px");
+          h.style.setProperty("--r", Math.random() * 120 - 60 + "deg");
+          h.style.setProperty("--s", 14 + Math.random() * 14 + "px");
+          h.addEventListener("animationend", () => h.remove());
+          document.body.appendChild(h);
+        }
+      }
+
+      /* ---- sequence ---- */
+      const stage = document.getElementById("stage");
+      const noteBtn = document.getElementById("noteBtn");
+
+      document.getElementById("openBtn").addEventListener("click", (e) => {
+        burst(e.clientX || innerWidth / 2, e.clientY || innerHeight / 2, 18);
+        document.getElementById("intro").classList.add("gone");
+        stage.classList.add("started");
+        setInterval(dropPetal, 450);
+        setTimeout(() => stage.classList.add("swaying"), 5200);
+        setTimeout(() => titleEl.classList.add("show"), 4200);
+        setTimeout(
+          () => document.getElementById("sub").classList.add("show"),
+          5600,
+        );
+        setTimeout(() => noteBtn.classList.add("show"), 6400);
+      });
+
+      /* ---- note ---- */
+      const overlay = document.getElementById("overlay");
+      const msg = document.getElementById("msg");
+      const sign = document.getElementById("sign");
+      let typing = null,
+        typedOnce = false;
+
+      function typeMessage() {
+        if (typedOnce) return;
+        typedOnce = true;
+        let i = 0;
+        typing = setInterval(() => {
+          msg.textContent = MESSAGE.slice(0, ++i);
+          if (i >= MESSAGE.length) {
+            clearInterval(typing);
+            msg.classList.add("done");
+            sign.textContent = SIGNATURE;
+            sign.classList.add("show");
+          }
+        }, 32);
+      }
+
+      noteBtn.addEventListener("click", () => {
+        const r = noteBtn.getBoundingClientRect();
+        burst(r.left + r.width / 2, r.top + r.height / 2);
+        overlay.classList.add("open");
+        setTimeout(typeMessage, 500);
+      });
+      function closeNote() {
+        overlay.classList.remove("open");
+      }
+      document.getElementById("closeBtn").addEventListener("click", closeNote);
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) closeNote();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeNote();
+      });
+    </script>
+  </body>
+</html>
